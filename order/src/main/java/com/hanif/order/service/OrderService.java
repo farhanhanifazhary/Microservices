@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.stereotype.Service;
@@ -28,12 +29,26 @@ public class OrderService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
     public Order creatOrder(Order order) {
-        return orderRepository.save(order);
+         if (order.getStatus() == null) {
+            order.setStatus("NEW");
+        }
+
+        Order savedOrder = orderRepository.save(order);
+
+        // 🔥 KIRIM KE RABBITMQ
+        rabbitTemplate.convertAndSend("myQueue", savedOrder.toString());
+
+        System.out.println("📤 Order dikirim ke RabbitMQ");
+
+        return savedOrder;
     }
 
     @Transactional
@@ -46,6 +61,10 @@ public class OrderService {
             && !Objects.equals(order.getTanggal(), tanggal)) {
                 order.setTanggal(tanggal);
             }
+
+        if (status != null && status.length() > 0) {
+            order.setStatus(status);
+        }
     }
 
     public Order getOrderById(Long id) {
@@ -56,7 +75,7 @@ public class OrderService {
         List<ResponseTemplate> responseList = new ArrayList<>();
         Order order = getOrderById(id);
         ServiceInstance serviceInstance = discoveryClient.getInstances("PRODUK").get(0);
-        String url = serviceInstance.getUri().toString() + "/api/produk/" + order.getProdukId();
+        String url = serviceInstance.getUri().toString() + "/api/produk/" + order.getId_produk();
         Produk produk = restTemplate.getForObject(url, Produk.class);
         ResponseTemplate vo = new ResponseTemplate();
         vo.setOrder(order);
