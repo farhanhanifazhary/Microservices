@@ -1,0 +1,4 @@
+com\hanif\order\vo\Produk.class
+com\hanif\order\OrderApplication.class
+com\hanif\order\RabbitMQConfig.class
+com\hanif\order\config\JwtFilter.class

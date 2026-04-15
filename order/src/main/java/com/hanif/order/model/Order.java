@@ -19,6 +19,16 @@ public class Order {
     private double total;
     private String tanggal;
     private String status;
+    private String createdBy;
+    private String role;
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
     public Long getId() {
         return id;

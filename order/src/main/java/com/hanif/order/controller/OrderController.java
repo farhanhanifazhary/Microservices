@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hanif.order.model.Order;
 import com.hanif.order.service.OrderService;
 import com.hanif.order.vo.ResponseTemplate;
+import org.springframework.security.core.Authentication;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,7 +53,21 @@ public class OrderController {
     
     
     @PostMapping
-    public Order createOrder(@RequestBody Order order) {
+    public Order createOrder(@RequestBody Order order, Authentication auth) {
+        if (auth == null) {
+            return null;
+        }
+
+        String username = auth.getName(); // 🔥 ambil dari JWT
+        String role = auth.getAuthorities()
+        .iterator()
+        .next()
+        .getAuthority();
+
+        // opsional: set ke order
+        order.setCreatedBy(username);
+        order.setRole(role);
+
         return orderService.creatOrder(order);
     }
 
