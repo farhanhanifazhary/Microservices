@@ -1,0 +1,5 @@
+com\hanif\produk\model\Produk.class
+com\hanif\produk\service\ProdukService.class
+com\hanif\produk\controller\ProdukController.class
+com\hanif\produk\ProdukApplication.class
+com\hanif\produk\repository\ProdukRepository.class
