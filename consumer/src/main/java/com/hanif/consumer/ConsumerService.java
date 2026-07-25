@@ -7,17 +7,22 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class ConsumerService {
 
     @Autowired
     private JavaMailSender mailSender;
 
-    @RabbitListener(queues = "myQueue")
+    @RabbitListener(queues = "orderQueue")
     public void receivedMessage(String text){
+        log.info("INFO - Received message from Order");
         System.out.println("📩 Received: " + text);
+        log.info("START - Send message to Email");
         sendEmail(text);
+        log.info("END - Message Sent");
     }
 
     public void sendEmail(String text){

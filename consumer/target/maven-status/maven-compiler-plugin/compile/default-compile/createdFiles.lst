@@ -1,0 +1,3 @@
+com\hanif\consumer\ConsumerApplication.class
+com\hanif\consumer\ConsumerService.class
+com\hanif\consumer\RabbitMQConfig.class
