@@ -22,73 +22,73 @@ public class Order {
     private String createdBy;
     private String role;
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+    // public void setCreatedBy(String createdBy) {
+    //     this.createdBy = createdBy;
+    // }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+    // public String getCreatedBy() {
+    //     return createdBy;
+    // }
 
-    public Long getId() {
-        return id;
-    }
+    // public Long getId() {
+    //     return id;
+    // }
 
-    public Long getId_produk() {
-        return produk_id;
-    }
+    // public Long getId_produk() {
+    //     return produk_id;
+    // }
 
-    public void setId_produk(Long produk_id) {
-        this.produk_id = produk_id;
-    }
+    // public void setId_produk(Long produk_id) {
+    //     this.produk_id = produk_id;
+    // }
 
-    public Long getId_pelanggan() {
-        return id_pelanggan;
-    }
+    // public Long getId_pelanggan() {
+    //     return id_pelanggan;
+    // }
 
-    public void setId_pelanggan(Long id_pelanggan) {
-        this.id_pelanggan = id_pelanggan;
-    }
+    // public void setId_pelanggan(Long id_pelanggan) {
+    //     this.id_pelanggan = id_pelanggan;
+    // }
 
-    public double getHarga() {
-        return harga;
-    }
+    // public double getHarga() {
+    //     return harga;
+    // }
 
-    public void setHarga(double harga) {
-        this.harga = harga;
-    }
+    // public void setHarga(double harga) {
+    //     this.harga = harga;
+    // }
 
-    public int getJumlah() {
-        return jumlah;
-    }
+    // public int getJumlah() {
+    //     return jumlah;
+    // }
 
-    public void setJumlah(int jumlah) {
-        this.jumlah = jumlah;
-    }
+    // public void setJumlah(int jumlah) {
+    //     this.jumlah = jumlah;
+    // }
 
-    public double getTotal() {
-        return total;
-    }
+    // public double getTotal() {
+    //     return total;
+    // }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
+    // public void setTotal(double total) {
+    //     this.total = total;
+    // }
 
-    public String getTanggal() {
-        return tanggal;
-    }
+    // public String getTanggal() {
+    //     return tanggal;
+    // }
 
-    public void setTanggal(String tanggal) {
-        this.tanggal = tanggal;
-    }
+    // public void setTanggal(String tanggal) {
+    //     this.tanggal = tanggal;
+    // }
 
-    public String getStatus() {
-        return status;
-    }
+    // public String getStatus() {
+    //     return status;
+    // }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    // public void setStatus(String status) {
+    //     this.status = status;
+    // }
     
     @Override
     public String toString() {

@@ -1,0 +1,314 @@
+services:
+  eureka-server:
+    build: ./eureka
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+
+  authentication:
+    build: ./authentication
+    container_name: authentication-service
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    volumes:
+      - authentication_data:/data
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  order:
+    build: ./order
+    container_name: order-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    volumes:
+      - order_data:/data
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      logstash:
+        condition: service_healthy
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # pelanggan:
+  #   build: ./pelanggan
+  #   container_name: pelanggan-service
+  #   ports:
+  #     - "8082:8082"
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      
+  #     - SPRING_DATASOURCE_URL=jdbc:h2:file:/data/pelanggan;DB_CLOSE_ON_EXIT=false;AUTO_RECONNECT=TRUE
+  #     - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.h2.Driver
+  #     - SPRING_DATASOURCE_USERNAME=sa
+  #     - SPRING_DATASOURCE_PASSWORD=password
+      
+  #     - SPRING_H2_CONSOLE_ENABLED=true
+  #     - SPRING_H2_CONSOLE_PATH=/h2-console
+  #     - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect
+  #     - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  #     - SPRING_JPA_SHOW_SQL=true
+  #   volumes:
+  #     - pelanggan_data:/data
+  #   depends_on:
+  #     eureka-server:
+  #       condition: service_healthy
+  #   networks:
+  #     - backend_network
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+
+  # produk:
+  #   build: ./produk
+  #   container_name: produk-service
+  #   ports:
+  #     - "8081:8081"
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      
+  #     - SPRING_DATASOURCE_URL=jdbc:h2:file:/data/produk;DB_CLOSE_ON_EXIT=false;AUTO_RECONNECT=TRUE
+  #     - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.h2.Driver
+  #     - SPRING_DATASOURCE_USERNAME=sa
+  #     - SPRING_DATASOURCE_PASSWORD=password
+      
+  #     - SPRING_H2_CONSOLE_ENABLED=true
+  #     - SPRING_H2_CONSOLE_PATH=/h2-console
+  #     - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect
+  #     - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  #     - SPRING_JPA_SHOW_SQL=true
+  #   volumes:
+  #     - produk_data:/data
+  #   depends_on:
+  #     eureka-server:
+  #       condition: service_healthy
+  #     elasticsearch:
+  #       condition: service_healthy
+  #     logstash:
+  #       condition: service_healthy
+  #   networks:
+  #     - backend_network
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+    
+  consumer:
+    build: ./consumer
+    container_name: consumer-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    volumes:
+      - consumer_data:/data
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      logstash:
+        condition: service_healthy
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # producer:
+  #   build: ./producer
+  #   container_name: producer-service
+  #   ports:
+  #     - "8085:8085"
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  #     - SPRING_RABBITMQ_HOST=rabbitmq
+  #     - SPRING_RABBITMQ_PORT=5672
+  #     - SPRING_RABBITMQ_USERNAME=guest
+  #     - SPRING_RABBITMQ_PASSWORD=guest
+      
+  #     - SPRING_MAIL_HOST=smtp.gmail.com
+  #     - SPRING_MAIL_PORT=587
+  #     - SPRING_MAIL_USERNAME=farhanhanifazhary@gmail.com
+  #     - SPRING_MAIL_PASSWORD=exyuksoskphoddol 
+  #   volumes:
+  #     - producer_data:/data
+  #   depends_on:
+  #     eureka-server:
+  #       condition: service_healthy
+  #     rabbitmq:
+  #       condition: service_healthy
+  #     elasticsearch:
+  #       condition: service_healthy
+  #     logstash:
+  #       condition: service_healthy
+  #   networks:
+  #     - backend_network
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8085/actuator/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    networks:
+      - backend_network
+    depends_on:
+      - eureka-server
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - backend_network
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    networks:
+      - backend_network
+    restart: always
+
+  elasticsearch:
+    image: elasticsearch:8.17.1
+    container_name: elasticsearch
+    restart: always
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data/
+    environment:
+      - xpack.security.enabled=false  # Disable security for local development
+      - ES_JAVA_OPTS=-Xmx256m -Xms256m
+      - discovery.type=single-node
+    ports:
+      - '9200:9200'
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"\\|\"status\":\"yellow\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  logstash:
+    image: logstash:8.17.1
+    container_name: logstash
+    restart: always
+    volumes:
+      - ./logstash/:/logstash_dir
+    command: logstash -f /logstash_dir/pipeline/logstash.conf
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    ports:
+      - '5044:5044'
+    environment:
+      - LS_JAVA_OPTS=-Xmx256m -Xms256m
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9600/_node | grep -q '\"status\":\"green\"\\|\"ok\"\\|\"logstash\"'"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  kibana:
+    image: kibana:8.17.1
+    container_name: kibana
+    restart: always
+    ports:
+      - '5601:5601'
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -I http://localhost:5601/api/status | grep -q 'HTTP/1.1 200 OK'"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+networks:
+  backend_network:
+    driver: bridge
+
+volumes:
+  authentication_data:
+  order_data:
+  pelanggan_data:
+  produk_data:
+  consumer_data:
+  producer_data:
+  rabbitmq_data:
+  elastic_data:

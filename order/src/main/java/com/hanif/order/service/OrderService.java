@@ -44,7 +44,7 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
 
         // 🔥 KIRIM KE RABBITMQ
-        rabbitTemplate.convertAndSend("myQueue", savedOrder.toString());
+        rabbitTemplate.convertAndSend("orderQueue", savedOrder.toString());
 
         System.out.println("📤 Order dikirim ke RabbitMQ");
 
@@ -75,7 +75,7 @@ public class OrderService {
         List<ResponseTemplate> responseList = new ArrayList<>();
         Order order = getOrderById(id);
         ServiceInstance serviceInstance = discoveryClient.getInstances("PRODUK").get(0);
-        String url = serviceInstance.getUri().toString() + "/api/produk/" + order.getId_produk();
+        String url = serviceInstance.getUri().toString() + "/api/produk/" + order.getProduk_id();
         Produk produk = restTemplate.getForObject(url, Produk.class);
         ResponseTemplate vo = new ResponseTemplate();
         vo.setOrder(order);

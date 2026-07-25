@@ -1,4 +1,11 @@
+com\hanif\order\model\Order.class
+com\hanif\order\service\OrderService.class
+com\hanif\order\controller\OrderController.class
+com\hanif\order\config\SecurityConfig.class
+com\hanif\order\config\JwtFilter.class
+com\hanif\order\config\JwtUtil.class
+com\hanif\order\repository\OrderRepository.class
 com\hanif\order\vo\Produk.class
 com\hanif\order\OrderApplication.class
+com\hanif\order\vo\ResponseTemplate.class
 com\hanif\order\RabbitMQConfig.class
-com\hanif\order\config\JwtFilter.class
